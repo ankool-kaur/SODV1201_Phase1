@@ -1,0 +1,147 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+
+
+</head>
+  <body>
+
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+      </nav>
+    </header>
+
+      <section class="main">
+        <h2>Search</h2>
+        <form action="output_main.html">
+
+          <div>
+            <label for="type">Choose filter</label>
+            <select name="filter" id="filter">
+              <option value="address">Address</option>
+              <option value="neighborhood">Neighborhood</option>
+              <option value="sq-ft">Square Feet</option>
+              <option value="parkingAllowed">With Parking</option>
+              <option value="parkingNotAllowed">Without Parking</option>
+              <option value="transportationIs">With Public Transportation</option>
+              <option value="transportationIsNot">Without Public Transportation</option>
+              <option value="seats">Seating Capacity</option>
+              <option value="smokingIs">With Smoking</option>
+              <option value="smokingIsNot">Without Smoking</option>
+              <option value="dateAvailable">Availibility Date</option>
+              <option value="leaseTerm">Lease Term</option>
+              <option value="price">Price</option>
+            </select>
+          </div>
+
+          <div id="search-area">
+            <label for="name">Search</label>
+            <input type="text" name="question" placeholder="Questions"/>
+          </div>
+
+          <div>
+           <button id="b5">Search</button>
+          </div>
+        </form>
+      </section>
+
+        <footer>
+          <p id = dateTime></p>
+          &copy; 2020, Co-Workers : Made by Ankool Kaur.
+        </footer>
+
+    <script>
+      const b5 = document.getElementById('b5');
+
+      window.onload = showTime();
+
+      function showTime(){
+        let time = new Date().toLocaleTimeString();
+        let date = new Date().toLocaleDateString()
+        document.getElementById("dateTime").innerHTML = time + " " + date
+        setTimeout(showTime, 100);
+      };
+
+      b5.addEventListener("click", ()=>{
+        const num = document.getElementById('filter').value;
+        const searchField = document.getElementById('search-area');
+
+        if(num == 'parkingAllowed' || num == 'parkingNotAllowed' || num == 'transportationIs' || num == 'transportationIsNot' || num == 'smokingIs' || num == 'smokingIsNot') {
+          searchField.style.display = 'none';
+        }
+        else {
+          searchField.style.display = 'flex';
+        }
+      })
+
+    function navBar(text, page) {
+      let navigation = document.getElementById('navbar');
+      let a = document.createElement('a');
+      a.setAttribute('href', page);
+      let link = document.createTextNode(text);
+      a.appendChild(link);
+      navbar.appendChild(a);
+      };
+
+if (LoggedIn()) {
+  if (!asCoworker()) {
+    window.location.href = 'index_main.html';
+  }
+} else {
+  window.location.href = 'index_main.html';
+}
+
+      function LoggedIn() {
+  if (localStorage.getItem('user')) {
+    return true;
+  } else return false;
+}
+
+function asOwner() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Owner') {
+    return true;
+  } else return false;
+}
+
+function asCoworker() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Co-Worker') {
+    return true;
+  } else return false;
+}
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+window.onload = function() {
+  if (LoggedIn()) {
+    if (asOwner()) {
+      navBar('Home', 'index_main.html');
+      navBar('Add New', 'property_addition.html');
+      navBar('My Properties', 'properties_main.html');
+      navBar('My Workspaces', 'workspace_main.html?name='+ (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', 'index_main.html');
+      navBar('All Workspaces', 'workspace02_main.html');
+      navBar('search-area', 'find_main.html');
+    }
+    navBar('Sign Out', 'signOut_main.html');
+  } else {
+    navBar('Home', 'index_main.html');
+    navBar('Signup', 'signIn_main.html');
+    navBar('Login', 'login_main.html');
+
+  }
+};
+
+    </script>
+
+  </body>
+</html>

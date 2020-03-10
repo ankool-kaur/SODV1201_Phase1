@@ -1,0 +1,193 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+  </head>
+  <body>
+    
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+         
+        </nav>
+  </header>
+    <main>
+      <section class="workspace">
+        <h3>Details of Workspace</h3>
+
+        <div id="details"></div>
+        <hr />
+
+        <h3>Property Details</h3>
+        <div id="property-details"></div>
+        <hr />
+
+        <h3>Owner Details</h3>
+        <div id="owner-details"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p id = dateTime></p>
+      &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+  </body>
+  <script>
+    window.onload = showTime();
+    function showTime(){
+      let time = new Date().toLocaleTimeString();
+      let date = new Date().toLocaleDateString()
+      document.getElementById("dateTime").innerHTML = time + " " + date
+      setTimeout(showTime, 100);
+    };
+
+
+    const urlText = new URLSearchParams(window.location.search);
+    const workspaceId = urlText.get('workspaceId');
+    const propertyId = urlText.get('propertyId');
+    const workspaces = JSON.parse(localStorage.getItem('workspaces'));
+    const properties = JSON.parse(localStorage.getItem('properties'));
+    const users = JSON.parse(localStorage.getItem('users'));
+    const workspaceDetails = workspaces.filter(function(workspace) {
+      if (workspace.id == workspaceId) {
+        return workspace;
+      }
+    });
+    const propertyDetails = properties.filter(function(property) {
+      if (property.id == propertyId) {
+        return property;
+      }
+    });
+
+    const userDetails = users.filter(function(user) {
+      if (user.email == propertyDetails[0].email) {
+        delete user.password;
+        return user;
+      }
+    });
+
+    const workspace = document.getElementById('details');
+    const name = document.createElement('p');
+    const type = document.createElement('p');
+    const seating = document.createElement('p');
+    const availibility = document.createElement('p');
+    const lease = document.createElement('p');
+    const price = document.createElement('p');
+    const smoking = document.createElement('p');
+    const nameText = document.createTextNode('Name: ' + workspaceDetails[0].name);
+    const typeText = document.createTextNode('Type: ' + workspaceDetails[0].type);
+    const seatingText = document.createTextNode('Seating: ' + workspaceDetails[0].seating);
+    const availibilityText = document.createTextNode('Availibility Date: ' + workspaceDetails[0].availibility);
+    const leaseText = document.createTextNode(`Lease: ${workspaceDetails[0].leaseTerm} ${workspaceDetails[0].leaseType}${parseInt(workspaceDetails[0].leaseTerm) > 1 ? 's' : ''}`);
+    const priceText = document.createTextNode('Price: ' + workspaceDetails[0].price);
+    const smokingText = document.createTextNode(`Smoking: ${workspaceDetails[0].smoking == 'true' ? 'isAllowed' : 'isNotAllowed'}`);
+    const property = document.getElementById('property-details');
+    const address = document.createElement('p');
+    const neighborhood = document.createElement('p');
+    const sqft = document.createElement('p');
+    const parking = document.createElement('p');
+    const transportation = document.createElement('p');
+    const addressText = document.createTextNode('Address: ' + propertyDetails[0].address);
+    const neighborhoodText = document.createTextNode('Neighborhood: ' + propertyDetails[0].neighborhood);
+    const sqftText = document.createTextNode('Square Feet: ' + propertyDetails[0].sqft);
+    const parkingText = document.createTextNode(`Parking Garage:   ${propertyDetails[0].parking == true ? 'Yes' : 'No'}`);
+    const transportationText = document.createTextNode(`Accessible to Public Transportation: ${propertyDetails[0].transportation == true ? 'Yes' : 'No'}`);
+    const owner = document.getElementById('owner-details');
+    const userName = document.createElement('p');
+    const email = document.createElement('p');
+    const phoneNumber = document.createElement('p');
+    const userNameText = document.createTextNode('Name: ' + userDetails[0].name);
+    const emailText = document.createTextNode(
+      'Email: ' + userDetails[0].email
+    );
+    const phoneNumberText = document.createTextNode('Phone Number: ' + userDetails[0].phoneNumber);
+    name.appendChild(nameText);
+    workspace.appendChild(name);
+    type.appendChild(typeText);
+    workspace.appendChild(type);
+    seating.appendChild(seatingText);
+    workspace.appendChild(seating);
+    availibility.appendChild(availibilityText);
+    workspace.appendChild(availibility);
+    lease.appendChild(leaseText);
+    workspace.appendChild(lease);
+    price.appendChild(priceText);
+    workspace.appendChild(price);
+    smoking.appendChild(smokingText);
+    workspace.appendChild(smoking);
+    address.appendChild(addressText);
+    property.appendChild(address);
+    neighborhood.appendChild(neighborhoodText);
+    property.appendChild(neighborhood);
+    sqft.appendChild(sqftText);
+    property.appendChild(sqft);
+    parking.appendChild(parkingText);
+    property.appendChild(parking);
+    transportation.appendChild(transportationText);
+    property.appendChild(transportation);
+    userName.appendChild(userNameText);
+    owner.appendChild(userName);
+    email.appendChild(emailText);
+    owner.appendChild(email);
+    phoneNumber.appendChild(phoneNumberText);
+    owner.appendChild(phoneNumber);
+
+    if (LoggedIn()) {
+  if (!asCoworker()) {
+    window.location.href = 'index_main.html';
+  }
+} else {
+  window.location.href = 'index_main.html';
+}
+
+    function LoggedIn() {
+  if (localStorage.getItem('user')) {
+    return true;
+  } else return false;
+}
+
+function asOwner() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Owner') {
+    return true;
+  } else return false;
+}
+
+function asCoworker() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Co-Worker') {
+    return true;
+  } else return false;
+}
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+window.onload = function() {
+  if (LoggedIn()) {
+    if (asOwner()) {
+      navBar('Home', 'index_main.html');
+      navBar('Add New', 'property_addition.html');
+      navBar('My Properties', 'properties_main.html');
+      navBar('My Workspaces', 'workspace_main.html?name='+ (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', 'index_main.html');
+      navBar('All Workspaces', 'workspace02_main.html');
+      navBar('search-area', 'find_main.html');
+    }
+    navBar('Sign Out', 'signOut_main.html');
+  } else {
+    navBar('Home', 'index_main.html');
+    navBar('Signup', 'signIn_main.html');
+    navBar('Login', 'login_main.html');
+
+  }
+};
+  </script>
+</html>

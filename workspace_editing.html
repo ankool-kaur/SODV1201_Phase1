@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+    
+  </head>
+  <body>
+
+    <header>
+        <h1>CO - WORKERS</h1>
+        <nav id ="navbar">
+           
+          </nav>
+    </header>
+
+      <section class="main">
+        <h3>Edit Workspace</h3>
+        <form>
+      
+            <label for="name">Workspace Name</label>
+            <input type="text" name="name" placeholder="Workspace Name" id="name"/>
+        
+            <label for="type">Type</label>
+            <select name="type" id="type">
+
+              <option value="Meeting Room">Meeting Room</option>
+              <option value="Private Office Room">Private Office Room</option>
+              <option value="Open Area Desk">Open Area Desk</option>
+            </select>
+        
+            <label for="seating-capacity">Seating Capacity</label>
+            <input type="number" name="seating-capacity" placeholder="Seating Capacity" id="seating-capacity"/>
+         
+            <label for="availibility-date">Availibility Date</label>
+            <input type="text" name="availibility-date" placeholder="Availibility Date [DD/MM/YYYY]" id="availibility-date"/>
+         
+            <label for="lease-term">Lease Term</label>
+            <div>
+              <input type="number" name="lease-term" placeholder="Lease Term" id="lease-term"/>
+              <select name="lease-type" id="lease-type">
+
+              
+                <option value="Day">Day</option>
+                <option value="Month">Month</option>
+                <option value="Year">Year</option>
+              </select>
+           
+            <label for="price">Price</label>
+            <input type="number" name="price" placeholder="Price" id="price"/>
+          
+              <input type="checkbox" name="smoking" id="smoking" />
+              <label for="smoking">Smoking Allowance</label>
+            
+          
+              <input type="checkbox" name="visibility" id="visibility"/>
+              <label for="visibility">Show in listings</label>
+            
+              <div>
+            <button id = "b7">Update</button>
+          <div>
+
+        </form>
+      </section>
+  
+
+    <footer>
+      <p id = dateTime></p>
+        &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+    <script>
+      window.onload = showTime();
+      function showTime(){
+      let time = new Date().toLocaleTimeString();
+      let date = new Date().toLocaleDateString()
+      document.getElementById("dateTime").innerHTML = time + " " + date
+      setTimeout(showTime, 100);
+      };
+
+      const b7 = document.getElementById("b7");
+      const urlText = new URLSearchParams(window.location.search);
+      const name = urlText.get('name');
+      const type = urlText.get('type');
+      const seating = urlText.get('seating');
+      const availibility = urlText.get('availibility');
+      const leaseTerm = urlText.get('leaseTerm');
+      const leaseType = urlText.get('leaseType');
+      const price = urlText.get('price');
+      const smoking = urlText.get('smoking');
+      const visibility = urlText.get('visibility');
+
+      const namel = document.getElementById('name');
+      const typel = document.getElementById('type');
+      const seatingl = document.getElementById('seating-capacity');
+      const availibilityl = document.getElementById('availibility-date');
+      const leaseTerml = document.getElementById('lease-term');
+      const leaseTypel = document.getElementById('lease-type');
+      const pricel = document.getElementById('price');
+      const smokingl = document.getElementById('smoking');
+      const visibilityl = document.getElementById('visibility');
+
+      namel.value = name;
+      typel.value = type;
+      seatingl.value = seating;
+      availibilityl.value = availibility;
+      leaseTerml.value = leaseTerm;
+      leaseTypel.value = leaseType;
+      pricel.value = price;
+      smokingl.checked = smoking == 'true' ? true : false;
+      visibilityl.checked = visibility == 'true' ? true : false;
+
+      b7.addEventListener("click", () =>{
+        const name = document.getElementById('name').value;
+        const type = document.getElementById('type').value;
+        const seating = document.getElementById('seating-capacity').value;
+        const availibility = document.getElementById('availibility-date').value;
+        const leaseTerm = document.getElementById('lease-term').value;
+        const leaseType = document.getElementById('lease-type').value;
+        const price = document.getElementById('price').value;
+        const smoking = document.getElementById('smoking').checked;
+        const visibility = document.getElementById('visibility').checked;
+
+        if (
+          name == '' ||
+          type == undefined ||
+          seating == '' ||
+          availibility == '' ||
+          leaseTerm == '' ||
+          leaseType == undefined ||
+          price == ''
+        ) {
+          alert('Must enter all fields');
+        } else {
+          const date = new RegExp(
+            /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i
+          );
+          if (date.test(availibility)) {
+            const workspaces = JSON.parse(localStorage.getItem('workspaces'));
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentWorkspace = urlParams.get('name');
+            const currentAvailibility = urlParams.get('availibility');
+            const idOfProperty = urlParams.get('propertyId');
+            const workspaceId = urlParams.get('workspaceId');
+            let success = false;
+            for (i = 0; i < workspaces.length; i++) {
+              if (workspaces[i].id == workspaceId) {
+                workspaces[i].name = name;
+                workspaces[i].type = type;
+                workspaces[i].seating = seating;
+                workspaces[i].availibility = availibility;
+                workspaces[i].leaseTerm = leaseTerm;
+                workspaces[i].leaseType = leaseType;
+                workspaces[i].price = price;
+                workspaces[i].smoking = smoking;
+                workspaces[i].visibility = visibility;
+                success = true;
+                break;
+              }
+            }
+            if (success) {
+              localStorage.setItem('workspaces', JSON.stringify(workspaces));
+              alert('Workspace Updated Successfully.');
+              window.location.href = 'workspace_main.html?name='+ (JSON.parse(localStorage.getItem('user')).name);
+            } else {
+              alert('Error!');
+            }
+          }
+        }
+      });
+
+if (LoggedIn()) {
+  if (!asOwner()) {
+    window.location.href = 'index_main.html';
+  }
+} else {
+  window.location.href = 'index_main.html';
+}
+
+function LoggedIn() {
+  if (localStorage.getItem('user')) {
+    return true;
+  } else return false;
+}
+
+function asOwner() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Owner') {
+    return true;
+  } else return false;
+}
+
+function asCoworker() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Co-worker') {
+    return true;
+  } else return false;
+}
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+window.onload = function() {
+  if (LoggedIn()) {
+    if (asOwner()) {
+      navBar('Home', 'index_main.html');
+      navBar('Add New', 'property_addition.html');
+      navBar('My Properties', 'properties_main.html');
+      navBar('My Workspaces', 'workspace_main.html?name='+ (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', 'index_main.html');
+      navBar('All Workspaces', 'workspace02_main.html');
+      navBar('search-area', 'find_main.html');
+    }
+    navBar('Sign Out', 'signOut_main.html');
+  } else {
+    navBar('Home', 'index_main.html');
+    navBar('Signup', 'signIn_main.html');
+    navBar('Login', 'login_main.html');
+
+  }
+};
+    </script>
+
+  </body>
+</html>

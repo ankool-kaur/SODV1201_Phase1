@@ -1,0 +1,193 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="style_Ankool.css" />
+  </head>
+  <body>
+
+    <header>
+      <h1>CO - WORKERS</h1>
+      <nav id ="navbar">
+        
+        </nav>
+  </header>
+
+  
+      <section class="main">
+        <h3>Edit Property</h3>
+        <form>
+         
+            <label for="address">Address</label>
+            <input type="text" name="address" placeholder="Address" id="address"/>
+          
+            <label for="neighborhood">Neighborhood</label>
+            <input type="text" name="neighborhood" placeholder="Neighborhood" id="neighborhood"/>
+         
+            <label for="square-feet">Square Feet</label>
+            <input type="number" name="square-feet" placeholder="Square Feet" id="square-feet"/>
+        
+            
+              <input type="radio" name="parking" id="parking" />
+              <label for="parking">Parking Garage Availability</label>
+           
+            
+              <input type="radio" name="transportation" id="transportation"/>
+              <label for="transportation">Accessible by Public Transport</label>
+           
+      
+              <input type="checkbox" name="visibility" id="visibility"/>
+              <label for="visibility">Show workspaces in listings</label>
+           
+              <div>
+            <button id = "b6">Update</button>
+         
+            </div>
+        </form>
+      </section>
+   
+
+    <footer>
+      <p id = dateTime></p>
+      &copy; 2020, Co-Workers : Made by Ankool Kaur.
+    </footer>
+
+    <script>
+      window.onload = showTime();
+        function showTime(){
+        let time = new Date().toLocaleTimeString();
+        let date = new Date().toLocaleDateString()
+        document.getElementById("dateTime").innerHTML = time + " " + date
+        setTimeout(showTime, 100);
+      };
+
+      const b6 = document.getElementById("b6");
+      const urltext = new URLSearchParams(window.location.search);
+      const address = urltext.get('address');
+      const neighborhood = urltext.get('neighborhood');
+      const sqfeet = urltext.get('sqft');
+      const parking = urltext.get('parking');
+      const transportation = urltext.get('transportation');
+      const visibility = urltext.get('visibility');
+      const addressl = document.getElementById('address');
+      const neighborhoodl = document.getElementById('neighborhood');
+      const sqfeetl = document.getElementById('square-feet');
+      const parkingl = document.getElementById('parking');
+      const transportationl = document.getElementById('transportation');
+      const visibilityl = document.getElementById('visibility');
+      addressl.value = address;
+      neighborhoodl.value = neighborhood;
+      sqfeetl.value = sqfeet;
+      parkingl.checked = parking == 'true' ? true : false;
+      transportationl.checked = transportation == 'true' ? true : false;
+      visibilityl.checked = visibility == 'true' ? true : false;
+
+      b6.addEventListener("click", () => {
+        const address = document.getElementById('address').value;
+        const neighborhood = document.getElementById('neighborhood').value;
+        const sqfeet2 = document.getElementById('square-feet').value;
+        const parking = document.getElementById('parking').checked;
+        const transportation = document.getElementById('transportation').checked;
+        const visibility = document.getElementById('visibility').checked;
+        if (address == '' || neighborhood == '' || sqfeet == '') {
+          alert(' Must enter all fields');
+        } else {
+          const properties = JSON.parse(localStorage.getItem('properties'));
+          const email = JSON.parse(localStorage.getItem('user')).email;
+          const id = urltext.get('id');
+          let success = false;
+          for (i = 0; i < properties.length; i++) {
+            if (properties[i].id == id) {
+              properties[i].address = address;
+              properties[i].neighborhood = neighborhood;
+              properties[i].sqft = sqfeet2;
+              properties[i].parking = parking;
+              properties[i].transportation = transportation;
+              properties[i].visibility = visibility;
+              success = true;
+              break;
+            }
+          }
+
+          const currentVisibility = urltext.get('visibility');
+          if (visibility.toString() != currentVisibility.toString()) {
+            var workspaces = JSON.parse(localStorage.getItem('workspaces'));
+            if (workspaces) {
+              for (i = 0; i < workspaces.length; i++) {
+                if (workspaces[i].propertyId == id) {
+                  workspaces[i].visibility = visibility;
+                }
+              }
+              localStorage.setItem('workspaces', JSON.stringify(workspaces));
+            }
+          }
+
+          if (success) {
+            localStorage.setItem('properties', JSON.stringify(properties));
+            alert('Property Updated successfully.');
+            window.location.href = 'properties_main.html';
+          }
+        }
+      });
+
+
+
+      if (LoggedIn()) {
+    if (!asOwner()) {
+      window.location.href = 'index_main.html';
+    }
+  } else {
+    window.location.href = 'index_main.html';
+  }
+  
+  function LoggedIn() {
+  if (localStorage.getItem('user')) {
+    return true;
+  } else return false;
+}
+
+function asOwner() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Owner') {
+    return true;
+  } else return false;
+}
+
+function asCoworker() {
+  if (JSON.parse(localStorage.getItem('user')).role == 'Co-Worker') {
+    return true;
+  } else return false;
+}
+
+function navBar(text, page) {
+  let navigation = document.getElementById('navbar');
+  let a = document.createElement('a');
+  a.setAttribute('href', page);
+  let link = document.createTextNode(text);
+  a.appendChild(link);
+  navbar.appendChild(a);
+}
+
+window.onload = function() {
+  if (LoggedIn()) {
+    if (asOwner()) {
+      navBar('Home', 'index_main.html');
+      navBar('Add New', 'property_addition.html');
+      navBar('My Properties', 'properties_main.html');
+      navBar('My Workspaces', 'workspace_main.html?name='+ (JSON.parse(localStorage.getItem('user')).name));
+    } else {
+      navBar('Home', 'index_main.html');
+      navBar('All Workspaces', 'workspace02_main.html');
+      navBar('search-area', 'find_main.html');
+    }
+    navBar('Sign Out', 'signOut_main.html');
+  } else {
+    navBar('Home', 'index_main.html');
+    navBar('Signup', 'signIn_main.html');
+    navBar('Login', 'login_main.html');
+
+  }
+};
+    
+    </script>
+
+  </body>
+</html>
